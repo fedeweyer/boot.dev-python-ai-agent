@@ -2,6 +2,8 @@ import os
 from dotenv import load_dotenv
 import argparse
 from prompts import system_prompt
+from call_function import available_functions
+import json
 
 parser = argparse.ArgumentParser(description="Chatbot")
 parser.add_argument("user_prompt", type=str, help="User prompt")
@@ -36,6 +38,7 @@ response = client.chat.completions.create(
     model="openrouter/free",
     messages=messages,
     temperature=0,
+    tools=available_functions,
 )
 
 def get_usage(response):
@@ -51,5 +54,14 @@ if args.verbose is True:
     print(f"Prompt tokens: {usage.prompt_tokens}")
     print(f"Response tokens: {usage.completion_tokens}")
 print("Response:")
-print(response.choices[0].message.content)
+
+message = response.choices[0].message
+if message.tool_calls:
+    for tool_call in message.tool_calls:
+        function_args = json.loads(tool_call.function.arguments or "{}")
+        print(f"Calling function: {tool_call.function.name}({function_args})")
+else:
+    message = message.content
+print(message)
+
 
