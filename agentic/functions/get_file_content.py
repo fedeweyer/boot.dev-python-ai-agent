@@ -2,6 +2,23 @@ import os
 from pathlib import Path
 MAX_CHARS = 10_000
 
+schema_get_file_content = {
+    "type": "function",
+    "function": {
+        "name": "get_file_content",
+        "description": "Gets the content of a file, limited to 10k characters, if that happens, the file is truncated and a legend indicating that is added at the end",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string",
+                    "description": "File path to get content. Path is relative to the working directory (default is the working directory itself)",
+                },
+            },
+        },
+    },
+}
+
 def get_file_content(working_directory: str, file_path: str) -> str:
     try:
         working_dir_abs = os.path.abspath(working_directory)
