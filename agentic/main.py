@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 import argparse
+from prompts import system_prompt
 
 parser = argparse.ArgumentParser(description="Chatbot")
 parser.add_argument("user_prompt", type=str, help="User prompt")
@@ -27,12 +28,14 @@ client = OpenAI(
     api_key=api_key,
 )
 messages = [
+    {"role": "system", "content": system_prompt},
     {"role": "user", "content": args.user_prompt},
 ]
 
 response = client.chat.completions.create(
     model="openrouter/free",
     messages=messages,
+    temperature=0,
 )
 
 def get_usage(response):
