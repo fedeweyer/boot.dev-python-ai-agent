@@ -37,7 +37,7 @@ messages = [
 
 def get_usage(response):
     if response.usage is None:
-        raise RuntimeError(f"{var_name} does not exist")
+        raise RuntimeError("usage info is missing from response")
     return response.usage
 
 for _ in range(20):
