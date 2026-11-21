@@ -12,40 +12,69 @@ schema_write_file = {
                     "type": "string",
                     "description": "File path to execute. Path is relative to the working directory (default is the working directory itself)",
                 },
-                 "content": {
+                "content": {
                     "type": "string",
                     "description": "file content to write",
-                 },
+                },
             },
         },
     },
 }
 
+
 def write_file(working_directory: str, file_path: str, content: str) -> str:
+    """Write content to a file within the permitted working directory.
+
+    Args:
+        working_directory: The base directory that must not be escaped.
+        file_path: Path to the file to write, relative to working_directory.
+        content: The content to write to the file.
+
+    Returns:
+        A success message with the number of characters written, or an error message.
+    """
     try:
         working_dir_abs = os.path.abspath(working_directory)
-        target_dir = os.path.normpath(os.path.join(working_dir_abs, file_path))
+        target_path = os.path.normpath(os.path.join(working_dir_abs, file_path))
 
-        valid_target_dir = os.path.commonpath([working_dir_abs, target_dir]) == working_dir_abs
-
-        if valid_target_dir is False:
+        # Ensure the target path is within the permitted working directory
+        # os.path.commonpath raises ValueError on Windows if paths are on different drives
+        try:
+            is_within_working_dir = os.path.commonpath([working_dir_abs, target_path]) == working_dir_abs
+        except ValueError:
             result = f'Error: Cannot write to "{file_path}" as it is outside the permitted working directory'
+            print(result)
+            return result
 
+        if not is_within_working_dir:
+            result = f'Error: Cannot write to "{file_path}" as it is outside the permitted working directory'
+            print(result)
+            return result
 
-        else:
-            is_dir = os.path.isdir(target_dir)
-            if is_dir is True:
-                result = f'Error: Cannot write to "{file_path}" as it is a directory'
-            else:
-                os.makedirs(os.path.dirname(target_dir), exist_ok=True)
-                with open(target_dir, "w") as f:
-                    f.write(content)
-                result = f'Successfully wrote to "{file_path}" ({len(content)} characters written)'
+        # Check if target is a directory
+        if os.path.isdir(target_path):
+            result = f'Error: Cannot write to "{file_path}" as it is a directory'
+            print(result)
+            return result
+
+        # Create parent directories if they don't exist
+        parent_dir = os.path.dirname(target_path)
+        if parent_dir:
+            os.makedirs(parent_dir, exist_ok=True)
+
+        # Write the file
+        with open(target_path, "w") as f:
+            f.write(content)
+
+        result = f'Successfully wrote to "{file_path}" ({len(content)} characters written)'
         print(result)
         return result
-    except KeyError:
-        result = ("Error: failed to get_file_content")
+
+    except OSError as e:
+        result = f"Error: failed to write file - {e}"
         print(result)
         return result
-
-
+    except Exception as e:
+        result = f"Error: unexpected error writing file - {e}"
+        print(result)
+        return result
