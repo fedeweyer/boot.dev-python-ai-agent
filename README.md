@@ -1,5 +1,6 @@
 # Coding agent 
 
+This coding agent was created by following this course: https://www.boot.dev/courses/build-ai-agent-python
 ## Setup
 
 To set up the project, run the following commands:
