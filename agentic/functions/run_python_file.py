@@ -1,5 +1,6 @@
 import os
 import subprocess
+from typing import Any
 
 schema_run_python_file = {
     "type": "function",
@@ -23,41 +24,79 @@ schema_run_python_file = {
     },
 }
 
+
 def run_python_file(
     working_directory: str, file_path: str, args: list[str] | None = None
 ) -> str:
+    """
+    Execute a Python script and return its output.
+
+    Args:
+        working_directory: The base directory that must not be escaped.
+        file_path: Path to the Python file to execute, relative to working_directory.
+        args: Optional list of arguments to pass to the Python script.
+
+    Returns:
+        A string containing the combined stdout and stderr output from the execution.
+        If an error occurs, an error message string is returned.
+    """
     try:
         working_dir_abs = os.path.abspath(working_directory)
         target_dir = os.path.normpath(os.path.join(working_dir_abs, file_path))
 
-        valid_target_dir = os.path.commonpath([working_dir_abs, target_dir]) == working_dir_abs
-
-        if valid_target_dir is False:
+        # Ensure the target file is within the permitted working directory
+        if not os.path.commonpath([working_dir_abs, target_dir]) == working_dir_abs:
             result = f'Error: Cannot execute "{file_path}" as it is outside the permitted working directory'
+            print(result)
+            return result
+
+        # Check that the path is a regular file
+        if not os.path.isfile(target_dir):
+            result = f'Error: "{file_path}" does not exist or is not a regular file'
+            print(result)
+            return result
+
+        # Check that the file is a Python file
+        if not file_path.endswith(".py"):
+            result = f'Error: "{file_path}" is not a Python file'
+            print(result)
+            return result
+
+        # Execute the Python script
+        command = ["python", target_dir]
+        if args:
+            command.extend(args)
+            
+        completed_process = subprocess.run(
+            command, 
+            cwd=working_directory, 
+            text=True, 
+            timeout=30, 
+            capture_output=True
+        )
+        
+        # Handle non-zero exit codes
+        if completed_process.returncode != 0:
+            result = f"Process exited with code {completed_process.returncode}"
         else:
-            is_file = os.path.isfile(target_dir)
-            if is_file is False:
-                result = f'Error: "{file_path}" does not exist or is not a regular file'
+            stdout = completed_process.stdout.strip()
+            stderr = completed_process.stderr.strip()
+            
+            if stdout or stderr:
+                result = f"STDOUT: {stdout}\nSTDERR: {stderr}"
             else:
-                if not file_path.endswith(".py"):
-                    result = f'Error: "{file_path}" is not a Python file'
-                    print(result)
-                    return result
-                command = ["python", target_dir]
-                if args:
-                    command.extend(args)
-                completed_process = subprocess.run(command, cwd=working_directory, text=True, timeout=30, capture_output=True)
-                if completed_process.returncode != 0:
-                    result = f"Process exited with code {completed_process.returncode}"
-                if not completed_process.stdout and not completed_process.stderr:
-                    result = "No output produced"
-                result = f"STDOUT: {completed_process.stdout}\nSTDERR: {completed_process.stderr}"
+                result = "No output produced"
+        
         print(result)
         return result
-    except KeyError:
+        
+    except ValueError as e:
+        # Handle cases where paths are on different drives (Windows)
+        result = f"Error: Invalid path operation - {e}"
+        print(result)
+        return result
+    except Exception as e:
+        # Catch any other exceptions
         result = f"Error: executing Python file: {e}"
         print(result)
         return result
-
-
-
