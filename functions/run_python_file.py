@@ -28,18 +28,6 @@ schema_run_python_file = {
 def run_python_file(
     working_directory: str, file_path: str, args: list[str] | None = None
 ) -> str:
-    """
-    Execute a Python script and return its output.
-
-    Args:
-        working_directory: The base directory that must not be escaped.
-        file_path: Path to the Python file to execute, relative to working_directory.
-        args: Optional list of arguments to pass to the Python script.
-
-    Returns:
-        A string containing the combined stdout and stderr output from the execution.
-        If an error occurs, an error message string is returned.
-    """
     try:
         working_dir_abs = os.path.abspath(working_directory)
         target_dir = os.path.normpath(os.path.join(working_dir_abs, file_path))

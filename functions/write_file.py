@@ -23,16 +23,6 @@ schema_write_file = {
 
 
 def write_file(working_directory: str, file_path: str, content: str) -> str:
-    """Write content to a file within the permitted working directory.
-
-    Args:
-        working_directory: The base directory that must not be escaped.
-        file_path: Path to the file to write, relative to working_directory.
-        content: The content to write to the file.
-
-    Returns:
-        A success message with the number of characters written, or an error message.
-    """
     try:
         working_dir_abs = os.path.abspath(working_directory)
         target_path = os.path.normpath(os.path.join(working_dir_abs, file_path))

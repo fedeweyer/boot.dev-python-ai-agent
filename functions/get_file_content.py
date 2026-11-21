@@ -22,15 +22,6 @@ schema_get_file_content = {
 
 
 def get_file_content(working_directory: str, file_path: str) -> str:
-    """Read and return the content of a file, truncated at MAX_FILE_CONTENT_CHARS if needed.
-
-    Args:
-        working_directory: The base directory for resolving relative paths.
-        file_path: Path to the file to read, relative to working_directory.
-
-    Returns:
-        File content as a string, or an error message starting with "Error:".
-    """
     try:
         working_dir_abs = os.path.abspath(working_directory)
         target_file = os.path.normpath(os.path.join(working_dir_abs, file_path))
@@ -53,7 +44,7 @@ def get_file_content(working_directory: str, file_path: str) -> str:
             if f.read(1):
                 result += f'[...File "{target_file}" truncated at {MAX_FILE_CONTENT_CHARS} characters]'
 
-        print(result)
+        print(f"File read: {target_file}")
         return result
 
     except Exception as e:

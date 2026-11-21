@@ -20,16 +20,6 @@ schema_get_files_info = {
 
 
 def get_files_info(working_directory: str, directory: str = ".") -> str:
-    """List files in *directory* (relative to *working_directory*), returning each file's size and whether it is a directory.
-
-    Args:
-        working_directory: The base directory that must not be escaped.
-        directory:  Subdirectory to list, relative to *working_directory*. Defaults to current directory.
-
-    Returns:
-        A string with one line per entry: ``- <name>: file_size= <size> bytes, is_dir=<True|False>``.
-        If an error occurs, an error message string is returned.
-    """
     try:
         working_dir_abs = os.path.abspath(working_directory)
         target_dir = os.path.normpath(os.path.join(working_dir_abs, directory))

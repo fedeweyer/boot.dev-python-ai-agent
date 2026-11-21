@@ -1,5 +1,3 @@
-"""Function calling module for handling tool calls from the LLM."""
-
 import json
 import logging
 from collections.abc import Callable
@@ -31,19 +29,9 @@ FUNCTION_MAP: dict[str, Callable[..., str]] = {
 
 
 def call_function(tool_call: Any, verbose: bool = False) -> dict:
-    """
-    Execute a function call from the LLM.
-
-    Args:
-        tool_call: The tool call object from the LLM containing function name and arguments.
-        verbose: If True, log detailed function call information.
-
-    Returns:
-        A dictionary containing the function result formatted for the LLM.
-    """
     function_name = tool_call.function.name
     function_args = json.loads(tool_call.function.arguments or "{}")
-    function_args["working_directory"] = "./calculator"
+    function_args["working_directory"] = "."
     if verbose is True:
         print(f"- Calling function: {function_name}({function_args})")
     else:
