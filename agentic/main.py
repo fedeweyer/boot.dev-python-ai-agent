@@ -7,7 +7,7 @@ from typing import Any, Dict, List
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from call_function import available_functions, call_function
+from call_function import AVAILABLE_FUNCTIONS, call_function
 from prompts import system_prompt
 
 MAX_ITERATIONS = 20
@@ -81,7 +81,7 @@ def run_conversation(
             model="openrouter/free",
             messages=messages,
             temperature=0,
-            tools=available_functions,
+            tools=AVAILABLE_FUNCTIONS,
         )
 
         usage = get_usage(response)
