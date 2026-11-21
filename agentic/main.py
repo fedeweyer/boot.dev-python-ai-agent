@@ -60,7 +60,6 @@ def handle_tool_calls(
     """Process tool calls from the assistant message and append results."""
     for tool_call in message.tool_calls:
         function_args = json.loads(tool_call.function.arguments or "{}")
-        print(f"Calling function: {tool_call.function.name}({function_args})")
         result_message = call_function(tool_call, verbose)
         messages.append(result_message)
 
