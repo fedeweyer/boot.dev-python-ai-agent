@@ -74,7 +74,8 @@ def run_python_file(
                 result = f"- STDOUT: {stdout}\n- STDERR: {stderr}"
             else:
                 result = "No output produced"
-        
+
+        print(f"Python file executed: {file_path}")
         return result
         
     except ValueError as e:

@@ -61,6 +61,7 @@ def delete_file(working_directory: str, file_path: str) -> str:
         # Delete the file
         os.remove(target_path)
         result = f'Successfully deleted "{file_path}"'
+        print(f'File deleted: {file_path}')
         return result
 
     except OSError as e:

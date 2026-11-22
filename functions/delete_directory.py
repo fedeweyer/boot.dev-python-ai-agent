@@ -56,6 +56,7 @@ def delete_directory(working_directory: str, directory_path: str) -> str:
         # Delete the directory and all its contents
         shutil.rmtree(target_path)
         result = f'Successfully deleted directory "{directory_path}"'
+        print(f'Directory deleted: {directory_path}')
         return result
 
     except OSError as e:
