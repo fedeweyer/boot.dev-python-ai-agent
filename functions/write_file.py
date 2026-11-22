@@ -57,7 +57,6 @@ def write_file(working_directory: str, file_path: str, content: str) -> str:
             f.write(content)
 
         result = f'Successfully wrote to "{file_path}" ({len(content)} characters written)'
-        print(result)
         return result
 
     except OSError as e:

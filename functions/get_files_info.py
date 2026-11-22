@@ -42,7 +42,6 @@ def get_files_info(working_directory: str, directory: str = ".") -> str:
             entries.append(f"- {entry.name}: file_size= {file_size} bytes, is_dir={is_dir}")
 
         result = "\n".join(entries)
-        print(result)
         return result
 
     except Exception as exc:  # noqa: BLE001 – unexpected errors

@@ -71,11 +71,10 @@ def run_python_file(
             stderr = completed_process.stderr.strip()
             
             if stdout or stderr:
-                result = f"STDOUT: {stdout}\nSTDERR: {stderr}"
+                result = f"- STDOUT: {stdout}\n- STDERR: {stderr}"
             else:
                 result = "No output produced"
         
-        print(result)
         return result
         
     except ValueError as e:
