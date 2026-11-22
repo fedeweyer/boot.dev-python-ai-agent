@@ -25,8 +25,8 @@ schema_delete_directory = {
 
 def delete_directory(working_directory: str, directory_path: str) -> str:
     try:
-        working_dir_abs = os.path.abspath(working_directory)
-        target_path = os.path.normpath(os.path.join(working_dir_abs, directory_path))
+        working_dir_abs = os.path.realpath(working_directory)
+        target_path = os.path.realpath(os.path.join(working_dir_abs, directory_path))
 
         # Ensure the target path is within the permitted working directory
         try:

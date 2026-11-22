@@ -24,8 +24,8 @@ schema_write_file = {
 
 def write_file(working_directory: str, file_path: str, content: str) -> str:
     try:
-        working_dir_abs = os.path.abspath(working_directory)
-        target_path = os.path.normpath(os.path.join(working_dir_abs, file_path))
+        working_dir_abs = os.path.realpath(working_directory)
+        target_path = os.path.realpath(os.path.join(working_dir_abs, file_path))
 
         # Ensure the target path is within the permitted working directory
         # os.path.commonpath raises ValueError on Windows if paths are on different drives

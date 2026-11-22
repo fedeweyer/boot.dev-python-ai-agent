@@ -23,8 +23,8 @@ schema_get_file_content = {
 
 def get_file_content(working_directory: str, file_path: str) -> str:
     try:
-        working_dir_abs = os.path.abspath(working_directory)
-        target_file = os.path.normpath(os.path.join(working_dir_abs, file_path))
+        working_dir_abs = os.path.realpath(working_directory)
+        target_file = os.path.realpath(os.path.join(working_dir_abs, file_path))
 
         # Ensure the target file is within the permitted working directory
         if os.path.commonpath([working_dir_abs, target_file]) != working_dir_abs:
