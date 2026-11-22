@@ -94,7 +94,7 @@ def run_conversation(
         usage = get_usage(response)
 
         if verbose:
-            print(f"User prompt: {messages[-1]['content']}")
+            print(f"User prompt:\n{messages[-1]['content']}")
             print(f"Prompt tokens: {usage.prompt_tokens}")
             print(f"Response tokens: {usage.completion_tokens}")
 
