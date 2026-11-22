@@ -6,6 +6,8 @@ Available tools:
 - Read file contents
 - Execute Python files with optional arguments
 - Write or overwrite files
+- Delete files
+- Delete directories
 
 Core workflow:
 1. Explore first: Before editing or writing code, list relevant directories and read existing files to understand project structure, conventions, and dependencies. Never guess file paths, symbols, or contents.
