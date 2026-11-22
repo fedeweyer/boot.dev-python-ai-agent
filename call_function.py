@@ -33,7 +33,7 @@ def call_function(tool_call: Any, verbose: bool = False) -> dict:
     function_args = json.loads(tool_call.function.arguments or "{}")
     function_args["working_directory"] = "."
     if verbose is True:
-        print(f"- Calling function: {function_name}({function_args})")
+        print(f"-> Calling function: {function_name}({function_args}) <-")
     else:
         logger.info("Calling function: %s", function_name)
 
