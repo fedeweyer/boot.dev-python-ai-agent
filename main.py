@@ -79,7 +79,10 @@ def run_conversation(
     start_time: float,
 ) -> None:
     """Run the agent loop until a final answer is produced or max iterations reached."""
-    for _ in range(MAX_ITERATIONS):
+    for i in range(MAX_ITERATIONS):
+        elapsed = time.time() - start_time
+
+        print(f"Iteration {i}: Elapsed time since start: {elapsed:.2f} seconds")
         rate_limiter.wait_if_needed()
         response = client.chat.completions.create(
             model="openrouter/free",
@@ -87,9 +90,6 @@ def run_conversation(
             temperature=0,
             tools=AVAILABLE_FUNCTIONS,
         )
-
-        elapsed = time.time() - start_time
-        print(f"Elapsed time since start: {elapsed:.2f} seconds")
 
         usage = get_usage(response)
 
@@ -121,7 +121,7 @@ def main() -> None:
     api_key = get_env_var("OPENROUTER_API_KEY")
     client = create_client(api_key)
     messages = build_messages(args.user_prompt)
-    rate_limiter = RateLimiter(max_calls=10, period=60.0)
+    rate_limiter = RateLimiter(max_calls=5, period=60.0)
 
     run_conversation(client, messages, args.verbose, rate_limiter, start_time)
 
