@@ -8,6 +8,7 @@ from functions.get_file_content import get_file_content, schema_get_file_content
 from functions.run_python_file import run_python_file, schema_run_python_file
 from functions.write_file import write_file, schema_write_file
 from functions.delete_file import delete_file, schema_delete_file
+from functions.delete_directory import delete_directory, schema_delete_directory
 
 # Configure logger
 logger = logging.getLogger(__name__)
@@ -19,6 +20,7 @@ AVAILABLE_FUNCTIONS = [
     schema_run_python_file,
     schema_write_file,
     schema_delete_file,
+    schema_delete_directory,
 ]
 
 # Map of function names to their implementations
@@ -28,6 +30,7 @@ FUNCTION_MAP: dict[str, Callable[..., str]] = {
     "run_python_file": run_python_file,
     "write_file": write_file,
     "delete_file": delete_file,
+    "delete_directory": delete_directory,
 }
 
 
