@@ -26,7 +26,6 @@ def get_env_var(var_name: str) -> str:
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(description="Chatbot")
-    parser.add_argument("user_prompt", type=str, help="User prompt")
     parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
     return parser.parse_args()
 
@@ -39,11 +38,10 @@ def create_client(api_key: str) -> OpenAI:
     )
 
 
-def build_messages(user_prompt: str) -> List[Dict[str, str]]:
-    """Build the initial message list for the chat completion."""
+def build_initial_messages() -> List[Dict[str, str]]:
+    """Build the initial message list with system prompt."""
     return [
         {"role": "system", "content": system_prompt},
-        {"role": "user", "content": user_prompt},
     ]
 
 
@@ -71,14 +69,18 @@ def handle_tool_calls(
             print("-> Tool response:")
             print(f"{result_message['content']}")
 
-def run_conversation(
+
+def run_conversation_turn(
     client: OpenAI,
     messages: List[Dict[str, Any]],
     verbose: bool,
     rate_limiter: RateLimiter,
     start_time: float,
-) -> None:
-    """Run the agent loop until a final answer is produced or max iterations reached."""
+) -> bool:
+    """
+    Run a single turn of the agent loop.
+    Returns True if the conversation should continue, False if max iterations exceeded.
+    """
     for i in range(MAX_ITERATIONS):
         elapsed = time.time() - start_time
 
@@ -107,23 +109,50 @@ def run_conversation(
             handle_tool_calls(message, messages, verbose)
         else:
             print(message.content)
-            sys.exit(0)
+            return True
 
-    sys.exit("max iterations exceeded")
+    print("max iterations exceeded")
+    return False
 
 
 def main() -> None:
     """Entry point for the chatbot application."""
-    start_time = time.time()
     args = parse_args()
     load_dotenv()
 
     api_key = get_env_var("OPENROUTER_API_KEY")
     client = create_client(api_key)
-    messages = build_messages(args.user_prompt)
+    messages = build_initial_messages()
     rate_limiter = RateLimiter(max_calls=5, period=60.0)
 
-    run_conversation(client, messages, args.verbose, rate_limiter, start_time)
+    print("Chatbot started. Type 'exit' or 'quit' to end the conversation.")
+    print("=" * 50)
+
+    while True:
+        try:
+            user_prompt = input("\nYou: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\nGoodbye!")
+            break
+
+        if user_prompt.lower() in ("exit", "quit"):
+            print("Goodbye!")
+            break
+
+        if not user_prompt:
+            continue
+
+        # Add user message to conversation history
+        messages.append({"role": "user", "content": user_prompt})
+
+        start_time = time.time()
+        should_continue = run_conversation_turn(
+            client, messages, args.verbose, rate_limiter, start_time
+        )
+
+        if not should_continue:
+            print("Conversation ended due to max iterations.")
+            break
 
 
 if __name__ == "__main__":
