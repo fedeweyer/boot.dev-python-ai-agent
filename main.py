@@ -125,7 +125,7 @@ def main() -> None:
     messages = build_initial_messages()
     rate_limiter = RateLimiter(max_calls=5, period=60.0)
 
-    print("Chatbot started. Type 'exit' or 'quit' to end the conversation.")
+    print("Chatbot started. Type '/exit' or '/quit' to end the conversation.")
     print("=" * 50)
 
     while True:
@@ -135,9 +135,16 @@ def main() -> None:
             print("\nGoodbye!")
             break
 
-        if user_prompt.lower() in ("exit", "quit"):
+        if user_prompt.lower() in ("/exit", "/quit"):
             print("Goodbye!")
             break
+
+        if user_prompt.lower() == "/clear":
+            # Clear the message list, keeping only the system prompt
+            messages.clear()
+            messages.extend(build_initial_messages())
+            print("Message list cleared.")
+            continue
 
         if not user_prompt:
             continue
