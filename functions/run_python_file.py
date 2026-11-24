@@ -14,7 +14,7 @@ schema_run_python_file = {
                     "type": "string",
                     "description": "Python file path to execute. Path is relative to the working directory (default is the working directory itself)",
                 },
-                 "args": {
+                "args": {
                     "type": "array",
                     "items": "string",
                     "description": "Optional. Script additional arguments, default = None",

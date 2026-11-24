@@ -8,10 +8,6 @@ schema_delete_file = {
         "parameters": {
             "type": "object",
             "properties": {
-                "working_directory": {
-                    "type": "string",
-                    "description": "Directory path to work in. Defaults to the current working directory.",
-                },
                 "file_path": {
                     "type": "string",
                     "description": "File path to delete. Path is relative to the working directory.",
